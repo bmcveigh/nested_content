@@ -1,0 +1,28 @@
+# Nested Content routing definition
+
+entity.nested_content.canonical:
+  route_name: entity.nested_content.canonical
+  base_route: entity.nested_content.canonical
+  title: 'View'
+
+entity.nested_content.edit_form:
+  route_name: entity.nested_content.edit_form
+  base_route: entity.nested_content.canonical
+  title: 'Edit'
+
+entity.nested_content.version_history:
+  route_name: entity.nested_content.version_history
+  base_route: entity.nested_content.canonical
+  title: 'Revisions'
+
+entity.nested_content.delete_form:
+  route_name:  entity.nested_content.delete_form
+  base_route:  entity.nested_content.canonical
+  title: Delete
+  weight: 10
+
+nested_content.admin:
+  route_name: entity.nested_content.collection
+  title: 'Nested Content'
+  base_route: system.admin_content
+  weight: 15

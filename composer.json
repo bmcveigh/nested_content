@@ -1,0 +1,14 @@
+{
+  "name": "drupal/nested_content",
+  "type": "drupal-module",
+  "description": "Provides an entity type that supports ordering and revisions.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/nested_content",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/nested_content",
+    "source": "http://cgit.drupalcode.org/nested_content"
+  },
+  "require": { }
+}

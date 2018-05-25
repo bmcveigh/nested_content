@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Contains nested_content.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nested_content_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nested_content module.
+    case 'help.page.nested_content':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides an entity type that supports ordering and revisions.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nested_content_theme() {
+  $theme = [];
+  $theme['nested_content'] = [
+    'render element' => 'elements',
+    'file' => 'nested_content.page.inc',
+    'template' => 'nested_content',
+  ];
+  $theme['nested_content_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'nested_content.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function nested_content_theme_suggestions_nested_content(array $variables) {
+  $suggestions = [];
+  $entity = $variables['elements']['#nested_content'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'nested_content__' . $sanitized_view_mode;
+  $suggestions[] = 'nested_content__' . $entity->bundle();
+  $suggestions[] = 'nested_content__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'nested_content__' . $entity->id();
+  $suggestions[] = 'nested_content__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}

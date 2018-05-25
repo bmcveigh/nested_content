@@ -1,0 +1,38 @@
+uuid: c33d977d-f340-40ec-bc5d-672015ff0cd1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.nested_content.article.field_body
+    - nested_content.nested_content_type.article
+  module:
+    - text
+    - user
+id: nested_content.article.default
+targetEntityType: nested_content
+bundle: article
+mode: default
+content:
+  field_body:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  name:
+    label: above
+    type: string
+    weight: -4
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

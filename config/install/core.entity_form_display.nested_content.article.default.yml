@@ -1,0 +1,41 @@
+uuid: 34217103-1991-4448-91e6-01a5810589fc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.nested_content.article.field_body
+    - nested_content.nested_content_type.article
+  module:
+    - text
+id: nested_content.article.default
+targetEntityType: nested_content
+bundle: article
+mode: default
+content:
+  field_body:
+    weight: 26
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
+  name:
+    type: string_textfield
+    weight: -4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  user_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }

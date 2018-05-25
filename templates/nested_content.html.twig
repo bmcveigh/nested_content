@@ -1,0 +1,22 @@
+{#
+/**
+ * @file nested_content.html.twig
+ * Default theme implementation to present Nested Content data.
+ *
+ * This template is used when viewing Nested Content pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_nested_content()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('nested_content') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

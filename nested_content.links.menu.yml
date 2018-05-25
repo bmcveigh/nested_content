@@ -1,0 +1,18 @@
+
+# Nested Content menu items definition
+entity.nested_content.collection:
+  title: 'Nested Content list'
+  route_name: entity.nested_content.collection
+  description: 'List Nested Content entities'
+  parent: system.admin_structure
+  weight: 100
+
+
+# Nested Content type menu items definition
+entity.nested_content_type.collection:
+  title: 'Nested Content type'
+  route_name: entity.nested_content_type.collection
+  description: 'List Nested Content type (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

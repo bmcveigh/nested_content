@@ -1,0 +1,6 @@
+uuid: c435e006-d120-4ff1-ae2f-b3453e8defc3
+langcode: en
+status: true
+dependencies: {  }
+id: article
+label: Article

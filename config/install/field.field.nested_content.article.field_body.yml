@@ -1,0 +1,22 @@
+uuid: df4f5d89-53a2-4b5d-8bed-0452180f5ac3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.nested_content.field_body
+    - nested_content.nested_content_type.article
+  module:
+    - text
+id: nested_content.article.field_body
+field_name: field_body
+entity_type: nested_content
+bundle: article
+label: Body
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+field_type: text_with_summary

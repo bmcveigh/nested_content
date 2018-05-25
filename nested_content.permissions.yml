@@ -1,0 +1,33 @@
+add nested content entities:
+  title: 'Create new Nested Content entities'
+
+administer nested content entities:
+  title: 'Administer Nested Content entities'
+  description: 'Allow to access the administration form to configure Nested Content entities.'
+  restrict access: true
+
+delete nested content entities:
+  title: 'Delete Nested Content entities'
+
+edit nested content entities:
+  title: 'Edit Nested Content entities'
+
+access nested content overview:
+  title: 'Access the Nested Content overview page'
+
+view published nested content entities:
+  title: 'View published Nested Content entities'
+
+view unpublished nested content entities:
+  title: 'View unpublished Nested Content entities'
+
+view all nested content revisions:
+  title: 'View all Nested Content revisions'
+
+revert all nested content revisions:
+  title: 'Revert all Nested Content revisions'
+  description: 'Role requires permission <em>view Nested Content revisions</em> and <em>edit rights</em> for nested content entities in question or <em>administer nested content entities</em>.'
+
+delete all nested content revisions:
+  title: 'Delete all revisions'
+  description: 'Role requires permission to <em>view Nested Content revisions</em> and <em>delete rights</em> for nested content entities in question or <em>administer nested content entities</em>.'

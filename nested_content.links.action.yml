@@ -1,0 +1,11 @@
+entity.nested_content.add_form:
+  route_name: entity.nested_content.add_page
+  title: 'Add Nested Content'
+  appears_on:
+    - entity.nested_content.collection
+entity.nested_content_type.add_form:
+  route_name: entity.nested_content_type.add_form
+  title: 'Add Nested Content type'
+  appears_on:
+    - entity.nested_content_type.collection
+
