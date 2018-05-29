@@ -3,3 +3,5 @@ type: module
 description: Provides an entity type that supports ordering and revisions.
 core: 8.x
 package: Content
+dependencies:
+  - text

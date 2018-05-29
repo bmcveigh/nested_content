@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the nested_content module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function nested_content_install() {
+  // Rebuild the menu cache so that the "Nested Content"
+  // menu tab shows up.
+  Drupal::cache('menu')->invalidateAll();
+  Drupal::service('plugin.manager.menu.link')->rebuild();
+}

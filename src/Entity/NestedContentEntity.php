@@ -2,6 +2,7 @@
 
 namespace Drupal\nested_content\Entity;
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
@@ -20,6 +21,7 @@ use Drupal\user\UserInterface;
  *   bundle_label = @Translation("Nested Content type"),
  *   handlers = {
  *     "storage" = "Drupal\nested_content\NestedContentEntityStorage",
+ *     "storage_schema" = "Drupal\nested_content\NestedContentStorageSchema",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\nested_content\NestedContentEntityListBuilder",
  *     "views_data" = "Drupal\nested_content\Entity\NestedContentEntityViewsData",
@@ -72,6 +74,22 @@ use Drupal\user\UserInterface;
 class NestedContentEntity extends RevisionableContentEntityBase implements NestedContentEntityInterface {
 
   use EntityChangedTrait;
+
+  private $weight;
+
+  /**
+   * NestedContentEntity constructor.
+   */
+  public function __construct() {
+    if ($id = $this->id()) {
+      $this->weight = Database::getConnection()
+        ->select('nested_content_field_data', 'ncfd')
+        ->fields('ncfd', ['weight'])
+        ->condition('id', $id)
+        ->execute()
+        ->fetchField();
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -178,6 +196,13 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
   public function setPublished($published) {
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getWeight() {
+    return $this->weight;
   }
 
   /**

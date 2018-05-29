@@ -50,6 +50,7 @@ class NestedContentEntityListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build = parent::render();
+    $this->getStorage()->getQuery()->sort('weight', 'ASC');
     $entities = $this->load();
     $form = new NestedContentEntityCollectionForm($build['table'], $entities);
     $form = Drupal

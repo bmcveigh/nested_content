@@ -65,7 +65,7 @@ class NestedContentEntityForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.nested_content.canonical', ['nested_content' => $entity->id()]);
+    $form_state->setRedirect('entity.nested_content.collection');
   }
 
 }
