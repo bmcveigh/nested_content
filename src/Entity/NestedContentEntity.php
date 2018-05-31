@@ -80,8 +80,11 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
   /**
    * NestedContentEntity constructor.
    */
-  public function __construct() {
+  public function __construct(array $values, $entity_type, $bundle = FALSE, $translations = []) {
+    parent::__construct($values, $entity_type, $bundle, $translations);
+
     if ($id = $this->id()) {
+
       $this->weight = Database::getConnection()
         ->select('nested_content_field_data', 'ncfd')
         ->fields('ncfd', ['weight'])
@@ -202,7 +205,12 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
    * @return mixed
    */
   public function getWeight() {
-    return $this->weight;
+    return Database::getConnection()
+      ->select('nested_content_field_data', 'ncfd')
+      ->fields('ncfd', ['weight'])
+      ->condition('id', $this->id())
+      ->execute()
+      ->fetchField();
   }
 
   /**

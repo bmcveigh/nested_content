@@ -5,6 +5,8 @@
  * Contains nested_content.module.
  */
 
+use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -55,4 +57,27 @@ function nested_content_theme_suggestions_nested_content(array $variables) {
   $suggestions[] = 'nested_content__' . $entity->id();
   $suggestions[] = 'nested_content__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+ * Implements hook_nested_content_insert().
+ */
+function nested_content_nested_content_insert(EntityInterface $entity) {
+  $db = Database::getConnection();
+  $db->insert('nested_content_hierarchy')
+    ->fields([
+      'id' => $entity->id(),
+      'parent' => 0,
+    ])
+  ->execute();
+}
+
+/**
+ * Implements hook_nested_content_insert().
+ */
+function nested_content_nested_content_delete(EntityInterface $entity) {
+  $db = Database::getConnection();
+  $db->delete('nested_content_hierarchy')
+    ->condition('id', $entity->id())
+    ->execute();
 }

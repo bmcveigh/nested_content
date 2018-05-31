@@ -3,9 +3,13 @@
 namespace Drupal\nested_content;
 
 use Drupal;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Link;
+use Drupal\nested_content\Entity\NestedContentEntity;
 use Drupal\nested_content\Form\NestedContentEntityCollectionForm;
 
 /**
@@ -15,6 +19,21 @@ use Drupal\nested_content\Form\NestedContentEntityCollectionForm;
  */
 class NestedContentEntityListBuilder extends EntityListBuilder {
 
+  /**
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $db;
+
+  /**
+   * NestedContentEntityListBuilder constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage) {
+    parent::__construct($entity_type, $storage);
+    $this->db = Database::getConnection();
+  }
 
   /**
    * {@inheritdoc}
@@ -50,8 +69,24 @@ class NestedContentEntityListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $this->getStorage()->getQuery()->sort('weight', 'ASC');
-    $entities = $this->load();
+
+    // Get the nested content entities so we can display them
+    // in the tabledrag table.
+    $query = $this->db->select('nested_content_field_data', 'ncfd');
+    $query->fields('ncfd', ['id', 'weight']);
+    $query->join('nested_content_hierarchy', 'nch', 'ncfd.id = nch.id');
+    $query->fields('nch', ['id', 'parent']);
+    $query->orderBy('ncfd.weight', 'ASC');
+    $result = $query->execute()->fetchAll();
+
+    $ids = [];
+
+    foreach ($result as $i => $item) {
+      $ids[] = $item->id;
+    }
+
+    $entities = NestedContentEntity::loadMultiple($ids);
+
     $form = new NestedContentEntityCollectionForm($build['table'], $entities);
     $form = Drupal
       ::formBuilder()

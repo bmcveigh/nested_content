@@ -56,15 +56,18 @@ class NestedContentEntityCollectionForm extends FormBase {
       $form['table'][$key]['#nested_content'] = $entity;
       $indentation = [];
 
-      $storage = Drupal::entityTypeManager()->getStorage('nested_content');
+      $entity_type_manager = Drupal::entityTypeManager();
+      $storage = $entity_type_manager->getStorage('nested_content');
+      $parents = [];
       if ($storage instanceof NestedContentEntityStorage) {
         $parents = $storage->loadAllParents($entity->id());
       }
+      $depth = count($parents) - 1;
 
       if (!empty($parents)) {
         $indentation = [
           '#theme' => 'indentation',
-          '#size' => count($parents),
+          '#size' => $depth,
         ];
       }
       $form['table'][$key]['nested_content'] = [
@@ -73,6 +76,20 @@ class NestedContentEntityCollectionForm extends FormBase {
         '#type' => 'link',
         '#title' => $entity->getName(),
         '#url' => $entity->urlInfo(),
+      ];
+
+      // Get the bundle label and display it in the tabledrag
+      // since each item may be a different entity type.
+      // todo: make sure this is optimized.
+      $bundle_label = $entity_type_manager
+        ->getStorage('nested_content_type')
+        ->load($entity->bundle())
+        ->label();
+
+      $form['table'][$key]['nested_content_type'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => $bundle_label,
       ];
 
       $parent_fields = TRUE;
@@ -105,20 +122,14 @@ class NestedContentEntityCollectionForm extends FormBase {
         '#type' => 'hidden',
         // Same as above, the depth is modified by javascript, so it's a
         // default_value.
-        '#default_value' => $entity->depth,
+        '#default_value' => $depth,
         '#attributes' => [
           'class' => ['nested-content-depth'],
         ],
       ];
 
-      $parents = $storage->loadParents($entity->id());
-      $parent = FALSE;
-      if (!empty($parents)) {
-        $parent = reset($parents);
-      }
       $form['table'][$key]['weight'] = [
         '#type' => 'weight',
-        '#delta' => 1,
         '#title' => $this->t('Weight for added nested_content'),
         '#title_display' => 'invisible',
         '#default_value' => $entity->getWeight(),
@@ -132,6 +143,7 @@ class NestedContentEntityCollectionForm extends FormBase {
     }
 
     $form['table']['#header'] = [$this->t('Name')];
+    $form['table']['#header'][] = $this->t('Nested Content Type');
 
     $form['table']['#header'][] = $this->t('Weight');
     if ($parent_fields) {

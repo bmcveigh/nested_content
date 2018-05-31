@@ -28,8 +28,6 @@ class NestedContentEntityForm extends ContentEntityForm {
       ];
     }
 
-    $entity = $this->entity;
-
     return $form;
   }
 
