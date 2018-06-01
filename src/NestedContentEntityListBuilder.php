@@ -81,9 +81,27 @@ class NestedContentEntityListBuilder extends EntityListBuilder {
 
     $ids = [];
 
+    $weight = 0;
     foreach ($result as $i => $item) {
-      $ids[] = $item->id;
+      $count_query = $this->db->select('nested_content_hierarchy', 'nch');
+      $count_query->fields('nch');
+      $count_query->countQuery();
+      $count_query->condition('nch.parent', $item->id);
+
+      $count_result = $count_query->execute()->fetchField();
+
+      $weight += $count_result ? $i : $i + 1;
+
+      do {
+        if (!isset($ids[$weight])) {
+          $ids[$weight] = $item->id;
+          break;
+        }
+        $weight++;
+      } while (isset($ids[$weight]));
+      $ids[$weight] = $item->id;
     }
+    ksort($ids);
 
     $entities = NestedContentEntity::loadMultiple($ids);
 

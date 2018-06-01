@@ -1,0 +1,4 @@
+nested_content.tabledrag:
+  version: VERSION
+  js:
+      js/nested_content.js: {}

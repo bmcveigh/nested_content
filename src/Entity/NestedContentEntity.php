@@ -75,6 +75,10 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
 
   use EntityChangedTrait;
 
+  private $bundleLabel;
+
+  private $depth;
+
   private $weight;
 
   /**
@@ -202,15 +206,53 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
   }
 
   /**
+   * @return null|string
+   */
+  public function getBundleLabel(): string {
+    if ($this->bundleLabel) {
+      return $this->bundleLabel;
+    }
+
+    $this->bundleLabel = \Drupal::entityTypeManager()
+      ->getStorage('nested_content_type')
+      ->load($this->bundle())
+      ->label();
+
+    return $this->bundleLabel;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getDepth() {
+    if ($this->depth) {
+      return $this->depth;
+    }
+
+    return $this->depth;
+  }
+
+  /**
+   * @param mixed $depth
+   */
+  public function setDepth($depth) {
+    $this->depth = $depth;
+  }
+
+  /**
    * @return mixed
    */
   public function getWeight() {
-    return Database::getConnection()
-      ->select('nested_content_field_data', 'ncfd')
-      ->fields('ncfd', ['weight'])
-      ->condition('id', $this->id())
-      ->execute()
-      ->fetchField();
+    if (!isset($this->weight)) {
+      $this->weight =  Database::getConnection()
+        ->select('nested_content_field_data', 'ncfd')
+        ->fields('ncfd', ['weight'])
+        ->condition('id', $this->id())
+        ->execute()
+        ->fetchField();
+    }
+
+    return $this->weight;
   }
 
   /**

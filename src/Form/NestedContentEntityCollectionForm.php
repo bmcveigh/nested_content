@@ -6,6 +6,7 @@ use Drupal;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\nested_content\Entity\NestedContentEntity;
 use Drupal\nested_content\NestedContentEntityStorage;
 
 /**
@@ -13,6 +14,12 @@ use Drupal\nested_content\NestedContentEntityStorage;
  */
 class NestedContentEntityCollectionForm extends FormBase {
 
+  /**
+   * A render array representing the tabledrag
+   * table items.
+   *
+   * @var array
+   */
   private $renderedTable;
 
   /**
@@ -21,14 +28,75 @@ class NestedContentEntityCollectionForm extends FormBase {
   private $entities;
 
   /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Database
+   */
+  protected $db;
+
+  /**
    * NestedContentEntityCollectionForm constructor.
    *
-   * @param $renderedTable
-   * @param \Drupal\nested_content\Entity\NestedContentEntity[] $entities
+   * @param array $renderedTable
    */
-  public function __construct($renderedTable, array $entities) {
+  public function __construct($renderedTable) {
+    $this->db = Database::getConnection();
     $this->renderedTable = $renderedTable;
-    $this->entities = $entities;
+    $this->loadEntities();
+  }
+
+  protected function loadEntities() {
+    if (empty($this->entities)) {
+      // Get the nested content entities so we can display them
+      // in the tabledrag table.
+      $query = $this->db->select('nested_content_field_data', 'ncfd');
+      $query->fields('ncfd', ['id', 'weight']);
+      $query->join('nested_content_hierarchy', 'nch', 'ncfd.id = nch.id');
+      $query->fields('nch', ['id', 'parent']);
+      $query->orderBy('ncfd.weight', 'ASC');
+      $result = $query->execute()->fetchAll();
+
+      $ids = [];
+
+      $weight = 0;
+      foreach ($result as $i => $item) {
+        $count_query = $this->db->select('nested_content_hierarchy', 'nch');
+        $count_query->fields('nch');
+        $count_query->countQuery();
+        $count_query->condition('nch.parent', $item->id);
+
+        $count_result = $count_query->execute()->fetchField();
+
+        $weight += $count_result ? $i : $i + 1;
+
+        do {
+          if (!isset($ids[$weight])) {
+            $ids[$weight] = $item->id;
+            break;
+          }
+          $weight++;
+        } while (isset($ids[$weight]));
+        $ids[$weight] = $item->id;
+      }
+      ksort($ids);
+
+      $this->entities = NestedContentEntity::loadMultiple($ids);
+
+      $entity_type_manager = Drupal::entityTypeManager();
+      $storage = $entity_type_manager->getStorage('nested_content');
+
+      // Get the depth that each entity should be displayed.
+      foreach ($this->entities as $entity) {
+        $parents = [];
+        if ($storage instanceof NestedContentEntityStorage) {
+          $parents = $storage->loadAllParents($entity->id());
+        }
+
+        $num_parents = count($parents);
+        $depth = $num_parents ? $num_parents - 1 : 0;
+        $entity->setDepth($depth);
+      }
+    }
   }
 
   /**
@@ -54,22 +122,18 @@ class NestedContentEntityCollectionForm extends FormBase {
     foreach ($this->entities as $key => $entity) {
       /** @var $entity \Drupal\Core\Entity\EntityInterface */
       $form['table'][$key]['#nested_content'] = $entity;
-      $indentation = [];
 
-      $entity_type_manager = Drupal::entityTypeManager();
-      $storage = $entity_type_manager->getStorage('nested_content');
-      $parents = [];
-      if ($storage instanceof NestedContentEntityStorage) {
-        $parents = $storage->loadAllParents($entity->id());
-      }
-      $depth = count($parents) - 1;
+      // Get the depth of the entity so we can show indentation
+      // as well as ensuring the table is sorted in the correct
+      // order.
+      $depth = $entity->getDepth();
 
-      if (!empty($parents)) {
-        $indentation = [
-          '#theme' => 'indentation',
-          '#size' => $depth,
-        ];
-      }
+      // Indentation for the tabledrag table.
+      $indentation = [
+        '#theme' => 'indentation',
+        '#size' => $depth,
+      ];
+
       $form['table'][$key]['nested_content'] = [
         '#prefix' => !empty($indentation) ? \Drupal::service('renderer')
           ->render($indentation) : '',
@@ -81,10 +145,7 @@ class NestedContentEntityCollectionForm extends FormBase {
       // Get the bundle label and display it in the tabledrag
       // since each item may be a different entity type.
       // todo: make sure this is optimized.
-      $bundle_label = $entity_type_manager
-        ->getStorage('nested_content_type')
-        ->load($entity->bundle())
-        ->label();
+      $bundle_label = $entity->getBundleLabel();
 
       $form['table'][$key]['nested_content_type'] = [
         '#type' => 'html_tag',
@@ -186,6 +247,9 @@ class NestedContentEntityCollectionForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Save'),
     ];
+
+    $form['#attached']['library'][] = 'nested_content/nested_content.tabledrag';
+
     return $form;
   }
 
