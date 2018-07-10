@@ -138,7 +138,7 @@ class NestedContentEntityCollectionForm extends FormBase {
         '#prefix' => !empty($indentation) ? \Drupal::service('renderer')
           ->render($indentation) : '',
         '#type' => 'link',
-        '#title' => $entity->getName(),
+        '#title' => $entity->getTitle(),
         '#url' => $entity->urlInfo(),
       ];
 

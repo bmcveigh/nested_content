@@ -48,7 +48,7 @@ use Drupal\user\UserInterface;
  *     "id" = "id",
  *     "revision" = "vid",
  *     "bundle" = "type",
- *     "label" = "name",
+ *     "label" = "title",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -133,15 +133,15 @@ class NestedContentEntity extends RevisionableContentEntityBase implements Neste
   /**
    * {@inheritdoc}
    */
-  public function getName() {
-    return $this->get('name')->value;
+  public function getTitle() {
+    return $this->get('title')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
-    $this->set('name', $name);
+  public function setTitle($name) {
+    $this->set('title', $name);
     return $this;
   }
 

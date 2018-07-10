@@ -1,0 +1,8 @@
+name: 'Nested Content: Feeds'
+type: module
+description: Provides a feeds processor for the nested_content entity type.
+core: 8.x
+package: Nested Content
+dependencies:
+  - feeds
+  - nested_content

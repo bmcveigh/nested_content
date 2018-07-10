@@ -22,7 +22,7 @@ interface NestedContentEntityInterface extends RevisionableInterface, RevisionLo
    * @return string
    *   Name of the Nested Content.
    */
-  public function getName();
+  public function getTitle();
 
   /**
    * Sets the Nested Content name.
@@ -33,7 +33,7 @@ interface NestedContentEntityInterface extends RevisionableInterface, RevisionLo
    * @return \Drupal\nested_content\Entity\NestedContentEntityInterface
    *   The called Nested Content entity.
    */
-  public function setName($name);
+  public function setTitle($name);
 
   /**
    * Gets the Nested Content creation timestamp.
